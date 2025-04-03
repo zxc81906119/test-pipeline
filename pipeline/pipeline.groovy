@@ -35,6 +35,9 @@ spec:
                      sh 'id'
                      sh 'pwd'
                      sh 'ls -la'
+                     sh 'echo $HOME'
+                     sh 'cat /etc/passwd'
+                     sh 'cat /etc/shadow'
                      sh 'mvn -v -X'
                  }
             }
