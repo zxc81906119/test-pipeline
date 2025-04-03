@@ -13,6 +13,7 @@ pipeline {
 
 
                  container('maven') {
+                     sh 'ls /home/jenkins/agent/myTools/maven_3.9.9'
                      sh 'id'
                      sh 'pwd'
                      sh 'ls -la'
