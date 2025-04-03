@@ -8,7 +8,7 @@ spec:
   containers:
   - name: maven
     # In a real Jenkinsfile, it is recommended to pin to a specific version and use Dependabot or Renovate to bump it.
-    image: maven:latest
+    image: maven:3.9.9-amazoncorretto-21
     resources:
       requests:
         memory: "256Mi"
@@ -34,7 +34,8 @@ spec:
                  container('maven') {
                      sh 'id'
                      sh 'pwd'
-                     sh 'hostname'
+                     sh 'ls -la'
+                     sh 'mvn -v -X'
                  }
             }
         }
