@@ -1,24 +1,19 @@
 pipeline {
     agent {
         kubernetes {
-            inheritFrom 'maven'
+            inheritFrom 'maven,nodejs'
         }
     }
 
     stages {
 
-        stage('maven') {
+        stage('ci-cd') {
 
             steps {
-
-
+                 container('nodejs'){
+                     sh 'node -v'
+                 }
                  container('maven') {
-                     sh 'ls /home/jenkins/agent/myTools/maven_3.9.9'
-                     sh 'id'
-                     sh 'pwd'
-                     sh 'ls -la'
-                     sh 'echo $HOME'
-                     sh 'cat /etc/passwd'
                      sh 'mvn -v -X'
                      writeFile file: 'pom.xml', text: '''
 <project xmlns="http://maven.apache.org/POM/4.0.0">
