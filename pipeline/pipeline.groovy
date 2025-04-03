@@ -1,45 +1,6 @@
 pipeline {
     agent {
-        kubernetes {
-            yaml '''
-apiVersion: v1
-kind: Pod
-spec:
-  containers:
-  - name: maven
-    # In a real Jenkinsfile, it is recommended to pin to a specific version and use Dependabot or Renovate to bump it.
-    image: maven:3.9.9-amazoncorretto-21
-    resources:
-      requests:
-        memory: "256Mi"
-      limits:
-        memory: "512Mi"
-    command:
-    - sleep
-    args:
-    - infinity
-    securityContext:
-      # maven runs as root by default, it is recommended or even mandatory in some environments (such as pod security admission "restricted") to run as a non-root user.
-      runAsUser: 1000
-  - name: nodejs
-    image: node:22.14.0-bullseye
-    tty: true
-    command:
-    - cat
-    resources:
-      requests:
-        memory: "512Mi"
-        cpu: "1"
-      limits:
-        memory: "1Gi"
-        cpu: "2"
-    securityContext:
-      # maven runs as root by default, it is recommended or even mandatory in some environments (such as pod security admission "restricted") to run as a non-root user.
-      runAsUser: 1000
-'''
-//            22.14.0-bullseye
-            retries 2
-        }
+        label 'maven'
     }
 
     stages {
@@ -48,14 +9,6 @@ spec:
 
             steps {
 
-                container('nodejs'){
-                    sh 'id'
-                    sh 'pwd'
-                    sh 'ls -la'
-                    sh 'echo $HOME'
-                    sh 'cat /etc/passwd'
-                    sh 'node -v'
-                }
 
                  container('maven') {
                      sh 'id'
