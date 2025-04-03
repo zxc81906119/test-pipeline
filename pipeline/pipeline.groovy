@@ -37,7 +37,6 @@ spec:
                      sh 'ls -la'
                      sh 'echo $HOME'
                      sh 'cat /etc/passwd'
-                     sh 'cat /etc/shadow'
                      sh 'mvn -v -X'
                      writeFile file: 'pom.xml', text: '''
 <project xmlns="http://maven.apache.org/POM/4.0.0">
