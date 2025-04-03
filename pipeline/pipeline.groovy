@@ -1,7 +1,7 @@
 pipeline {
     agent {
         kubernetes {
-            inheritFrom 'maven,nodejs'
+            inheritFrom 'maven nodejs'
         }
     }
 
