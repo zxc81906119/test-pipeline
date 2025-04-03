@@ -21,7 +21,23 @@ spec:
     securityContext:
       # maven runs as root by default, it is recommended or even mandatory in some environments (such as pod security admission "restricted") to run as a non-root user.
       runAsUser: 1000
+  - name: nodejs
+    image: node:22.14.0-bullseye
+    tty: true
+    command:
+    - cat
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "1"
+      limits:
+        memory: "1Gi"
+        cpu: "2"
+    securityContext:
+      # maven runs as root by default, it is recommended or even mandatory in some environments (such as pod security admission "restricted") to run as a non-root user.
+      runAsUser: 1000
 '''
+//            22.14.0-bullseye
             retries 2
         }
     }
@@ -31,6 +47,16 @@ spec:
         stage('maven') {
 
             steps {
+
+                container('node'){
+                    sh 'id'
+                    sh 'pwd'
+                    sh 'ls -la'
+                    sh 'echo $HOME'
+                    sh 'cat /etc/passwd'
+                    sh 'node -v'
+                }
+
                  container('maven') {
                      sh 'id'
                      sh 'pwd'
@@ -74,6 +100,7 @@ public class SomeTest {
     public void checks() {}
 }
         '''
+                     // 改 HOME 環境變數,  這樣就會放到 $HOME/.m2 中
                      // Maven needs write access to $HOME/.m2, which it doesn't have in the maven image because only root is a real user.
                      sh 'HOME=$WORKSPACE_TMP/maven mvn -B -ntp -Dmaven.test.failure.ignore verify'
                      junit '**/target/surefire-reports/TEST-*.xml'
