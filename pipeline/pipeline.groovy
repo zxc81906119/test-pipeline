@@ -48,7 +48,7 @@ spec:
 
             steps {
 
-                container('node'){
+                container('nodejs'){
                     sh 'id'
                     sh 'pwd'
                     sh 'ls -la'
