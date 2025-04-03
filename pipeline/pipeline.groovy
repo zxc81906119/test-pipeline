@@ -36,6 +36,10 @@ spec:
     stages {
         stage('Main') {
             steps {
+                sh 'id'
+                sh 'pwd'
+                sh 'ls -la'
+                sh 'echo "$HOME"'
                 sh 'hostname'
             }
         }
