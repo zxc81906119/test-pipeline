@@ -1,58 +1,41 @@
 pipeline {
-    agent any
-
-    stages {
-
-        stage('test') {
-            steps {
-
-                sh 'id'
-                sh 'pwd'
-                sh 'hostname'
-            }
-        }
-
-
-        stage('k8s') {
-
-            agent {
-                kubernetes {
-                    // Rather than inline YAML, in a multibranch Pipeline you could use: yamlFile 'jenkins-pod.yaml'
-                    // Or, to avoid YAML:
-                    // containerTemplate {
-                    //     name 'shell'
-                    //     image 'ubuntu'
-                    //     command 'sleep'
-                    //     args 'infinity'
-                    // }
-                    yaml '''
+    agent {
+        kubernetes {
+            yaml '''
 apiVersion: v1
 kind: Pod
 spec:
   containers:
-  - name: shell
-    image: ubuntu
+  - name: maven
+    # In a real Jenkinsfile, it is recommended to pin to a specific version and use Dependabot or Renovate to bump it.
+    image: maven:latest
+    resources:
+      requests:
+        memory: "256Mi"
+      limits:
+        memory: "512Mi"
     command:
     - sleep
     args:
     - infinity
     securityContext:
-      # ubuntu runs as root by default, it is recommended or even mandatory in some environments (such as pod security admission "restricted") to run as a non-root user.
+      # maven runs as root by default, it is recommended or even mandatory in some environments (such as pod security admission "restricted") to run as a non-root user.
       runAsUser: 1000
 '''
-                    // Can also wrap individual steps:
-                    // container('shell') {
-                    //     sh 'hostname'
-                    // }
-                    defaultContainer 'shell'
-                    retries 2
-                }
-            }
+            retries 2
+        }
+    }
+
+    stages {
+
+        stage('maven') {
 
             steps {
-                sh 'id'
-                sh 'pwd'
-                sh 'hostname'
+                 container('maven') {
+                     sh 'id'
+                     sh 'pwd'
+                     sh 'hostname'
+                 }
             }
         }
 
