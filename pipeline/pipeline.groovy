@@ -5,17 +5,23 @@ pipeline {
         }
     }
 
+    tools {
+        jdk 'IBM Semeru Runtimes for Java 21'
+        maven 'maven 3.9.9'
+        nodejs 'nodejs 22'
+    }
+
+
     stages {
 
         stage('ci-cd') {
-
             steps {
-                 container('nodejs'){
-                     sh 'node -v'
-                 }
-                 container('maven') {
-                     sh 'mvn -v -X'
-                     writeFile file: 'pom.xml', text: '''
+                container('nodejs') {
+                    sh 'node -v'
+                }
+                container('maven') {
+                    sh 'mvn -v -X'
+                    writeFile file: 'pom.xml', text: '''
 <project xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
     <groupId>sample</groupId>
@@ -44,19 +50,19 @@ pipeline {
     </properties>
 </project>
         '''
-                     writeFile file: 'src/test/java/sample/SomeTest.java', text: '''
+                    writeFile file: 'src/test/java/sample/SomeTest.java', text: '''
 package sample;
 public class SomeTest {
     @org.junit.Test
     public void checks() {}
 }
         '''
-                     // 改 HOME 環境變數,  這樣就會放到 $HOME/.m2 中
-                     // Maven needs write access to $HOME/.m2, which it doesn't have in the maven image because only root is a real user.
-                     sh 'HOME=$WORKSPACE_TMP/maven mvn -B -ntp -Dmaven.test.failure.ignore verify'
-                     junit '**/target/surefire-reports/TEST-*.xml'
-                     archiveArtifacts '**/target/*.jar'
-                 }
+                    // 改 HOME 環境變數,  這樣就會放到 $HOME/.m2 中
+                    // Maven needs write access to $HOME/.m2, which it doesn't have in the maven image because only root is a real user.
+                    sh 'HOME=$WORKSPACE_TMP/maven mvn -B -ntp -Dmaven.test.failure.ignore verify'
+                    junit '**/target/surefire-reports/TEST-*.xml'
+                    archiveArtifacts '**/target/*.jar'
+                }
             }
         }
 
